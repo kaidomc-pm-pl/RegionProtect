@@ -1,0 +1,13 @@
+---
+# If true, show title when player enters an region.
+show-title: true
+
+# Warning message are sent to players when their actions are blocked.
+warning-message: "Can't do this in the standing region"
+
+# Timeout between warning message in seconds.
+waiting-message: 3
+
+# Operator players can still act in the forbidden region.
+interactive-operator: true
+...
