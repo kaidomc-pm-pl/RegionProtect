@@ -83,7 +83,8 @@ class RegionProtect extends PluginBase
 					break;
 				case "edit":
 					if (!isset($args[1])) {
-						$sender->sendMessage(TextFormat::RED . "You must enter a region title to perform the removal process!");
+						$sender->sendMessage(TextFormat::RED . "You need to enter the title of the region to be able to edit it.
+");
 						return false;
 					}
 					array_shift($args);
