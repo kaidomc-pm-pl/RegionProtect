@@ -24,8 +24,8 @@ Once the designated region is protected, the player will no longer worry about t
 # Permissions
 | Permission               | Description                                                                       |
 | ------------------------ | --------------------------------------------------------------------------------- |
-| `region.command.use`     | Basic permission to be able to use the Region feature.                            |
-| `region.interactive.use` | Permission is allowed to interact in the forbidden region. `(Developing)`         |
+| `regionprotect.command.use`     | Basic permission to be able to use the Region feature.                            |
+| `regionprotect.interactive.use` | Permission is allowed to interact in the forbidden region. `(Developing)`         |
 
 # Futures
 - [ ] Notification type: subtitle, mess, popup, tip.

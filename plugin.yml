@@ -12,10 +12,10 @@ commands:
     description: "Region property little feature!"
     permission: region.command.use
 permissions:
-  region.command.use:
+  regionprotect.command.use:
     default: op
     description: "Basic permission to be able to use the Region feature"
-  region.interactive.use:
+  regionprotect.interactive.use:
     default: op
     description: "Permission is allowed to interact in the forbidden region. (Developing)"
 ...
