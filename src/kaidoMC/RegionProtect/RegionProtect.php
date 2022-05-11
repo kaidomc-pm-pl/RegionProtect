@@ -10,10 +10,8 @@ use kaidoMC\RegionProtect\Utils\Configuration;
 use kaidoMC\RegionProtect\Utils\SelectVector;
 
 use jojoe77777\FormAPI\CustomForm;
-use jojoe77777\FormAPI\SimpleForm;
 
 use pocketmine\player\Player;
-use pocketmine\world\Position;
 
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
