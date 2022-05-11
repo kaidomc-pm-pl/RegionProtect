@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect\Provider;
 
@@ -22,31 +22,27 @@ use pocketmine\utils\TextFormat;
 use function scandir;
 use function file_exists;
 
-final class VectorAdjust
-{
+final class VectorAdjust {
 	/**
 	 * @var RegionProtect $regionProtect
 	 */
 	private RegionProtect $regionProtect;
 
-	public function __construct(RegionProtect $regionProtect)
-	{
+	public function __construct(RegionProtect $regionProtect) {
 		$this->regionProtect = $regionProtect;
 	}
 
 	/**
 	 * @return RegionProtect
 	 */
-	private function getRegionProtect() : RegionProtect
-	{
+	private function getRegionProtect(): RegionProtect {
 		return $this->regionProtect;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getLocations() : array
-	{
+	public function getLocations(): array {
 		return scandir($this->getRegionProtect()->getDataFolder() . "regions");
 	}
 
@@ -54,8 +50,7 @@ final class VectorAdjust
 	 * @param string $string
 	 * @return Config|null
 	 */
-	public function getLocation(string $string) : ?Config
-	{
+	public function getLocation(string $string): ?Config {
 		if (file_exists($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml")) {
 			return new Config($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml", Config::YAML);
 		}
@@ -69,25 +64,26 @@ final class VectorAdjust
 	 * @param array $firstVector
 	 * @param array $secondVector
 	 */
-	public function setLocation(Player $sender, string $string, string $regionName, array $firstVector, array $secondVector) : void
-	{
+	public function setLocation(Player $sender, string $string, string $regionName, array $firstVector, array $secondVector): void {
 		if ($this->getLocation($string) != null) {
 			$sender->sendMessage(TextFormat::RED . "Pre-existing region title please try again with a different name!");
 		} else {
 			$config = new Config($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml", Config::YAML);
-			$config->setAll([
-				"Name" => $regionName,
-				"Interactive" => [
-					"PvP" => true,
-					"BlockBreak" => true,
-					"BlockPlace" => true,
-					"Touch" => true
-				],
-				"World" => $sender->getWorld()->getDisplayName(),
-				"FirstVector" => [
-					"X" => $firstVector[0],
-					"Y" => $firstVector[1],
-					"Z" => $firstVector[2]],
+			$config->setAll(
+				[
+					"Name" => $regionName,
+					"Interactive" => [
+						"PvP" => true,
+						"BlockBreak" => true,
+						"BlockPlace" => true,
+						"Touch" => true
+					],
+					"World" => $sender->getWorld()->getDisplayName(),
+					"FirstVector" => [
+						"X" => $firstVector[0],
+						"Y" => $firstVector[1],
+						"Z" => $firstVector[2]
+					],
 					"SecondVector" => [
 						"X" => $secondVector[0],
 						"Y" => $secondVector[1],
@@ -107,8 +103,7 @@ final class VectorAdjust
 	 * @param Player $sender
 	 * @param string $string
 	 */
-	public function removeLocation(Player $sender, string $string) : void
-	{
+	public function removeLocation(Player $sender, string $string): void {
 		if ($this->getLocation($string) != null) {
 			unlink($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml");
 			$sender->sendMessage(TextFormat::GREEN . "Successfully deleted the region " . $string);
@@ -121,12 +116,11 @@ final class VectorAdjust
 	 * @param Player $sender
 	 * @param string $string
 	 */
-	public function adjustLocation(Player $sender, string $string) : void
-	{
+	public function adjustLocation(Player $sender, string $string): void {
 		$config = $this->getLocation($string);
 		if ($config != null) {
-			$form = new CustomForm(function (Player $sender, ?array $result) use ($config) : void {
-				if($result === null) {
+			$form = new CustomForm(function (Player $sender, ?array $result) use ($config): void {
+				if ($result === null) {
 					return;
 				}
 				$currentConfig = $config->getAll();
@@ -157,8 +151,7 @@ final class VectorAdjust
 	 * @param Location $currentVector
 	 * @return string|null
 	 */
-	public function getName(Location $currentVector) : ?string
-	{
+	public function getName(Location $currentVector): ?string {
 		foreach ($this->getLocations() as $file) {
 			$config = $this->getLocation(explode(".", $file)[0]);
 			if ($config != null) {
@@ -171,12 +164,14 @@ final class VectorAdjust
 				$Y2 = $config->get("SecondVector")["Y"];
 				$Z1 = $config->get("FirstVector")["Z"];
 				$Z2 = $config->get("SecondVector")["Z"];
-				if (min($X1, $X2) <= $currentVector->getX() &&
+				if (
+					min($X1, $X2) <= $currentVector->getX() &&
 					max($X1, $X2) >= $currentVector->getX() &&
 					min($Y1, $Y2) <= $currentVector->getY() &&
 					max($Y1, $Y2) >= $currentVector->getY() &&
 					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()) {
+					max($Z1, $Z2) >= $currentVector->getZ()
+				) {
 					return $config->get("Name");
 				}
 			}
@@ -188,8 +183,7 @@ final class VectorAdjust
 	 * @param Location $currentVector
 	 * @return bool
 	 */
-	public function getPvP(Location $currentVector) : bool
-	{
+	public function getPvP(Location $currentVector): bool {
 		foreach ($this->getLocations() as $file) {
 			$config = $this->getLocation(explode(".", $file)[0]);
 			if ($config != null) {
@@ -202,12 +196,14 @@ final class VectorAdjust
 				$Y2 = $config->get("SecondVector")["Y"];
 				$Z1 = $config->get("FirstVector")["Z"];
 				$Z2 = $config->get("SecondVector")["Z"];
-				if (min($X1, $X2) <= $currentVector->getX() &&
+				if (
+					min($X1, $X2) <= $currentVector->getX() &&
 					max($X1, $X2) >= $currentVector->getX() &&
 					min($Y1, $Y2) <= $currentVector->getY() &&
 					max($Y1, $Y2) >= $currentVector->getY() &&
 					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()) {
+					max($Z1, $Z2) >= $currentVector->getZ()
+				) {
 					if ($config->get("Interactive")["PvP"] != true) {
 						return false;
 					}
@@ -221,8 +217,7 @@ final class VectorAdjust
 	 * @param Location $currentVector
 	 * @return bool
 	 */
-	public function getInteractBlock(Location $currentVector, Event $event) : bool
-	{
+	public function getInteractBlock(Location $currentVector, Event $event): bool {
 		if ($event instanceof BlockBreakEvent) {
 			$string = "BlockBreak";
 		} elseif ($event instanceof BlockPlaceEvent) {
@@ -244,12 +239,14 @@ final class VectorAdjust
 				$Y2 = $config->get("SecondVector")["Y"];
 				$Z1 = $config->get("FirstVector")["Z"];
 				$Z2 = $config->get("SecondVector")["Z"];
-				if (min($X1, $X2) <= $currentVector->getX() &&
+				if (
+					min($X1, $X2) <= $currentVector->getX() &&
 					max($X1, $X2) >= $currentVector->getX() &&
 					min($Y1, $Y2) <= $currentVector->getY() &&
 					max($Y1, $Y2) >= $currentVector->getY() &&
 					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()) {
+					max($Z1, $Z2) >= $currentVector->getZ()
+				) {
 					if ($config->get("Interactive")[$string] != true) {
 						return false;
 					}

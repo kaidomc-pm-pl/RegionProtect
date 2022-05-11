@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect;
 
@@ -23,8 +23,7 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingleTonTrait;
 use pocketmine\utils\TextFormat;
 
-class RegionProtect extends PluginBase
-{
+class RegionProtect extends PluginBase {
 	use SingleTonTrait;
 
 	/**
@@ -32,8 +31,7 @@ class RegionProtect extends PluginBase
 	 */
 	private VectorAdjust $vectorAdjust;
 
-	protected function onLoad() : void
-	{
+	protected function onLoad(): void {
 		self::setInstance($this);
 		if (!is_dir($this->getDataFolder() . "regions/")) {
 			@mkdir($this->getDataFolder() . "regions/");
@@ -41,8 +39,7 @@ class RegionProtect extends PluginBase
 		$this->saveDefaultConfig();
 	}
 
-	protected function onEnable() : void
-	{
+	protected function onEnable(): void {
 		Configuration::initConfig($this);
 		$this->vectorAdjust = new VectorAdjust($this);
 		$this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
@@ -55,8 +52,7 @@ class RegionProtect extends PluginBase
 	 * @param array $args
 	 * @return bool
 	 */
-	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool
-	{
+	public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
 		if (!($sender instanceof Player)) {
 			$sender->sendMessage("Use this command in game!");
 			return false;
@@ -106,7 +102,7 @@ class RegionProtect extends PluginBase
 					$sender->sendMessage("Usage: /region <wand|create|edit|delete|list>");
 			}
 		} else {
-				$sender->sendMessage("Usage: /region <wand|create|edit|delete|list>");
+			$sender->sendMessage("Usage: /region <wand|create|edit|delete|list>");
 		}
 		return true;
 	}
@@ -114,8 +110,7 @@ class RegionProtect extends PluginBase
 	/**
 	 * @param Player $sender
 	 */
-	private function getBasicForm(Player $sender) : void
-	{
+	private function getBasicForm(Player $sender): void {
 		$firstVector = SelectVector::getFirstVector($sender);
 		$secondVector = SelectVector::getSecondVector($sender);
 		$X1 = $firstVector->getX();
@@ -125,7 +120,7 @@ class RegionProtect extends PluginBase
 		$Z1 = $firstVector->getZ();
 		$Z2 = $secondVector->getZ();
 
-		$form = new CustomForm (function (Player $sender, ?array $result) use ($X1, $X2, $Y1, $Y2, $Z1, $Z2) : void {
+		$form = new CustomForm(function (Player $sender, ?array $result) use ($X1, $X2, $Y1, $Y2, $Z1, $Z2): void {
 			if ($result === null) {
 				return;
 			}
@@ -146,8 +141,7 @@ class RegionProtect extends PluginBase
 	/**
 	 * @return VectorAdjust
 	 */
-	public function getVectorAdjust() : VectorAdjust
-	{
+	public function getVectorAdjust(): VectorAdjust {
 		return $this->vectorAdjust;
 	}
 }

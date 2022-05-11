@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect\Utils;
 
@@ -11,8 +11,7 @@ use pocketmine\event\Event;
 
 use function microtime;
 
-final class Configuration
-{
+final class Configuration {
 	/**
 	 * @var microtime[]
 	 */
@@ -23,24 +22,21 @@ final class Configuration
 	 */
 	private static RegionProtect $rProtect;
 
-	public static function initConfig(RegionProtect $rProtect)
-	{
+	public static function initConfig(RegionProtect $rProtect) {
 		self::$rProtect = $rProtect;
 	}
 
 	/**
 	 * @return RegionProtect
 	 */
-	private static function getRegionProtect() : RegionProtect
-	{
+	private static function getRegionProtect(): RegionProtect {
 		return self::$rProtect;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public static function getInformed() : bool
-	{
+	public static function getInformed(): bool {
 		if (self::getRegionProtect()->getConfig()->get("show-title") != true) {
 			return false;
 		}
@@ -51,8 +47,7 @@ final class Configuration
 	 * @param Player $sender
 	 * @param Event $event
 	 */
-	public static function shoot(Player $sender, Event $event) : void
-	{
+	public static function shoot(Player $sender, Event $event): void {
 		if (!($event->isCancelled())) {
 			if ($sender->hasPermission("region.interactive.use")) {
 				if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect;
 
@@ -21,23 +21,20 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 use pocketmine\utils\TextFormat;
 
-class EventListener implements Listener
-{
+class EventListener implements Listener {
 	/**
 	 * @var RegionProtect $regionProtect
 	 */
 	private RegionProtect $regionProtect;
 
-	public function __construct(RegionProtect $regionProtect)
-	{
+	public function __construct(RegionProtect $regionProtect) {
 		$this->regionProtect = $regionProtect;
 	}
 
 	/**
 	 * @return RegionProtect
 	 */
-	private function getRegionProtect() : RegionProtect
-	{
+	private function getRegionProtect(): RegionProtect {
 		return $this->regionProtect;
 	}
 
@@ -45,8 +42,7 @@ class EventListener implements Listener
 	 * @param PlayerMoveEvent $event
 	 * @priority HIGHEST
 	 */
-	public function onMove(PlayerMoveEvent $event) : void
-	{
+	public function onMove(PlayerMoveEvent $event): void {
 		$currentRegion = $this->getRegionProtect()->getVectorAdjust()->getName($event->getFrom());
 		$nextRegion = $this->getRegionProtect()->getVectorAdjust()->getName($event->getTo());
 		if ($currentRegion != $nextRegion) {
@@ -62,8 +58,7 @@ class EventListener implements Listener
 	 * @param EntityDamageEvent $event
 	 * @priority HIGHEST
 	 */
-	public function onEntity(EntityDamageEvent $event) : void
-	{
+	public function onEntity(EntityDamageEvent $event): void {
 		if ($event instanceof EntityDamageByEntityEvent) {
 			$target = $event->getDamager();
 			if ($target instanceof Player) {
@@ -78,8 +73,7 @@ class EventListener implements Listener
 	 * @param BlockBreakEvent $event
 	 * @priority HIGHEST
 	 */
-	public function onBreak(BlockBreakEvent $event) : void
-	{
+	public function onBreak(BlockBreakEvent $event): void {
 		$target = $event->getPlayer();
 		$blockVector = $event->getBlock()->getPosition();
 		$currentVector = Location::fromObject($blockVector, $blockVector->getWorld());
@@ -104,8 +98,7 @@ class EventListener implements Listener
 	 * @param BlockPlaceEvent $event
 	 * @priority HIGHEST
 	 */
-	public function onPlace(BlockPlaceEvent $event) : void
-	{
+	public function onPlace(BlockPlaceEvent $event): void {
 		$blockVector = $event->getBlock()->getPosition();
 		if (!$this->getRegionProtect()->getVectorAdjust()->getInteractBlock(Location::fromObject($blockVector, $blockVector->getWorld()), $event)) {
 			Configuration::shoot($event->getPlayer(), $event);
@@ -116,8 +109,7 @@ class EventListener implements Listener
 	 * @param PlayerInteractEvent $event
 	 * @priority HIGHEST
 	 */
-	public function onTouch(PlayerInteractEvent $event) : void
-	{
+	public function onTouch(PlayerInteractEvent $event): void {
 		$target = $event->getPlayer();
 		$blockVector = $event->getBlock()->getPosition();
 		$currentVector = Location::fromObject($blockVector, $blockVector->getWorld());
@@ -145,8 +137,7 @@ class EventListener implements Listener
 	 * @priority HIGHEST
 	 * Feature used to remove player's data after leaving the server.
 	 */
-	public function onQuit(PlayerQuitEvent $event) : void
-	{
+	public function onQuit(PlayerQuitEvent $event): void {
 		SelectVector::setSelect($event->getPlayer(), false);
 	}
 }
