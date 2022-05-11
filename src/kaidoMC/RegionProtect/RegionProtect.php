@@ -29,6 +29,9 @@ class RegionProtect extends PluginBase {
 	 */
 	private VectorAdjust $vectorAdjust;
 
+	/**
+	 * @return void
+	 */
 	protected function onLoad(): void {
 		self::setInstance($this);
 		if (!is_dir($this->getDataFolder() . "regions/")) {
@@ -36,7 +39,10 @@ class RegionProtect extends PluginBase {
 		}
 		$this->saveDefaultConfig();
 	}
-
+	
+	/**
+	 * @return void
+	 */
 	protected function onEnable(): void {
 		Configuration::initConfig($this);
 		$this->vectorAdjust = new VectorAdjust($this);
@@ -48,6 +54,7 @@ class RegionProtect extends PluginBase {
 	 * @param Command $command
 	 * @param string $label
 	 * @param array $args
+	 *
 	 * @return bool
 	 */
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
@@ -135,8 +142,8 @@ class RegionProtect extends PluginBase {
 		$form->setTitle("Adjust Location");
 		$form->addLabel("Selected information:");
 		$form->addLabel("World: " . $sender->getWorld()->getDisplayName() . "\nFirst Position: " . $X1 . " " . $Y1 . " " . $Z1 . "\nSecond Position:  " . $X2 . " " . $Y2 . " " . $Z2);
-		$form->addInput("Enter the title of the region.", "Mushroom", "Cow");
-		$form->addInput("Enter the name of the region (The content will be displayed when the player enters the region). ", "Mushroom", "Kingdom");
+		$form->addInput("Enter the title of the region.", "Mushroom Cow");
+		$form->addInput("Enter the name of the region (The content will be displayed when the player enters the region). ", "Mushroom Kingdom");
 		$sender->sendForm($form);
 	}
 
