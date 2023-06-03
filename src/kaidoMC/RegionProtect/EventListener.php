@@ -7,7 +7,7 @@ namespace kaidoMC\RegionProtect;
 use kaidoMC\RegionProtect\RegionProtect;
 use kaidoMC\RegionProtect\Utils\Configuration;
 use kaidoMC\RegionProtect\Utils\SelectVector;
-
+use pocketmine\block\Block;
 use pocketmine\entity\Location;
 
 use pocketmine\event\Listener;
@@ -18,7 +18,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-
+use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 class EventListener implements Listener {
@@ -99,9 +99,14 @@ class EventListener implements Listener {
 	 * @priority HIGHEST
 	 */
 	public function onPlace(BlockPlaceEvent $event): void {
-		$blockVector = $event->getBlock()->getPosition();
-		if (!$this->getRegionProtect()->getVectorAdjust()->getInteractBlock(Location::fromObject($blockVector, $blockVector->getWorld()), $event)) {
-			Configuration::shoot($event->getPlayer(), $event);
+		$blocks = $event->getTransaction()->getBlocks();
+		foreach ($blocks as [$x, $y, $z, $block]) {
+			if (!$block instanceof Block) return;
+			$blockVector = $$block->getPosition();
+			if (!$this->getRegionProtect()->getVectorAdjust()->getInteractBlock(Location::fromObject($blockVector, $blockVector->getWorld()), $event)) {
+				Configuration::shoot($event->getPlayer(), $event);
+			}
+			break;
 		}
 	}
 

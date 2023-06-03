@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace kaidoMC\RegionProtect\Utils;
 
 use kaidoMC\RegionProtect\RegionProtect;
-
+use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\player\Player;
 use pocketmine\event\Event;
+use pocketmine\event\player\PlayerInteractEvent;
 
 use function microtime;
 
@@ -48,6 +51,7 @@ final class Configuration {
 	 * @param Event $event
 	 */
 	public static function shoot(Player $sender, Event $event): void {
+		if (!$event instanceof EntityDamageEvent || !$event instanceof BlockBreakEvent || !$event instanceof BlockPlaceEvent || !$event instanceof PlayerInteractEvent) return;
 		if (!($event->isCancelled())) {
 			if ($sender->hasPermission("region.interactive.use")) {
 				if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {
@@ -59,7 +63,7 @@ final class Configuration {
 				self::$timeMSG[$sender->getName()] = microtime(true);
 				$sender->sendMessage(self::getRegionProtect()->getConfig()->get("warning-message"));
 			} else {
-				if (microtime(true) - self::$timeMSG[$sender->getName()] < self::getRegionProtect()->getConfig()->get("waiting-message")) {
+				if (microtime(true) - floatval(self::$timeMSG[$sender->getName()]) < self::getRegionProtect()->getConfig()->get("waiting-message")) {
 					return;
 				}
 				unset(self::$timeMSG[$sender->getName()]);

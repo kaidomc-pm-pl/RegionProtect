@@ -8,11 +8,9 @@ use pocketmine\player\Player;
 use pocketmine\entity\Location;
 
 use pocketmine\item\Item;
-use pocketmine\item\ItemIds;
-use pocketmine\item\ItemFactory;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\StringToEnchantmentParser;
-
+use pocketmine\item\VanillaItems;
 use pocketmine\utils\TextFormat;
 
 final class SelectVector {
@@ -32,8 +30,7 @@ final class SelectVector {
 	 * @return Item
 	 */
 	public static function getItem(Player $sender): Item {
-		$item = ItemFactory::getInstance();
-		$item = $item->get(ItemIds::WOODEN_AXE, 0, 1);
+		$item = VanillaItems::WOODEN_AXE();
 
 		$item->setCustomName(TextFormat::RESET . TextFormat::RED . "Select Vector");
 		$item->setLore([
