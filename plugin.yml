@@ -1,7 +1,7 @@
 ---
 name: RegionProtect
 version: 1.1.1
-api: 4.0.0
+api: 5.0.0
 main: kaidoMC\RegionProtect\RegionProtect
 author: kaidoMC
 description: A plugin that allows you to manage certain events in certain regions of the world.
