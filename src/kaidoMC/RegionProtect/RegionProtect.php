@@ -39,7 +39,7 @@ class RegionProtect extends PluginBase {
 		}
 		$this->saveDefaultConfig();
 	}
-	
+
 	/**
 	 * @return void
 	 */
