@@ -139,7 +139,7 @@ class EventListener implements Listener {
 
 	/**
 	 * Feature used to remove player's data after leaving the server.
-	 * @param PlayerQuitEvent
+	 * @param PlayerQuitEvent $event
 	 * @priority HIGHEST
 	 */
 	public function onQuit(PlayerQuitEvent $event): void {

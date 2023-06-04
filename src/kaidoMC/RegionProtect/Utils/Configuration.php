@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace kaidoMC\RegionProtect\Utils;
 
 use kaidoMC\RegionProtect\RegionProtect;
-use pocketmine\event\CancellableTrait;
+use pocketmine\event\Event;
 use pocketmine\player\Player;
-
 use function microtime;
 
 final class Configuration {
@@ -40,11 +39,7 @@ final class Configuration {
 		return true;
 	}
 
-	/**
-	 * @param Player $sender
-	 * @param CancellableTrait $event
-	 */
-	public static function shoot(Player $sender, CancellableTrait $event): void {
+	public static function shoot(Player $sender, Event $event): void {
 		if (!($event->isCancelled())) {
 			if ($sender->hasPermission("region.interactive.use")) {
 				if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {
