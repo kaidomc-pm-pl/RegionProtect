@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect\Utils;
 
+use pocketmine\event\Cancellable;
 use kaidoMC\RegionProtect\RegionProtect;
 use pocketmine\event\Event;
 use pocketmine\player\Player;
@@ -40,22 +41,24 @@ final class Configuration {
 	}
 
 	public static function shoot(Player $sender, Event $event): void {
-		if (!($event->isCancelled())) {
-			if ($sender->hasPermission("region.interactive.use")) {
-				if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {
-					return;
+		if ($event instanceof Cancellable) {
+			if (!($event->isCancelled())) {
+				if ($sender->hasPermission("region.interactive.use")) {
+					if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {
+						return;
+					}
 				}
-			}
-			$event->cancel();
-			if (empty(self::$timeMSG[$sender->getName()])) {
-				self::$timeMSG[$sender->getName()] = microtime(true);
-				$sender->sendMessage(self::getRegionProtect()->getConfig()->get("warning-message"));
-			} else {
-				if (microtime(true) - floatval(self::$timeMSG[$sender->getName()]) < self::getRegionProtect()->getConfig()->get("waiting-message")) {
-					return;
+				$event->cancel();
+				if (empty(self::$timeMSG[$sender->getName()])) {
+					self::$timeMSG[$sender->getName()] = microtime(true);
+					$sender->sendMessage(self::getRegionProtect()->getConfig()->get("warning-message"));
+				} else {
+					if (microtime(true) - floatval(self::$timeMSG[$sender->getName()]) < self::getRegionProtect()->getConfig()->get("waiting-message")) {
+						return;
+					}
+					unset(self::$timeMSG[$sender->getName()]);
+					$sender->sendMessage(self::getRegionProtect()->getConfig()->get("warning-message"));
 				}
-				unset(self::$timeMSG[$sender->getName()]);
-				$sender->sendMessage(self::getRegionProtect()->getConfig()->get("warning-message"));
 			}
 		}
 	}
