@@ -5,19 +5,13 @@ declare(strict_types=1);
 namespace kaidoMC\RegionProtect\Utils;
 
 use kaidoMC\RegionProtect\RegionProtect;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\CancellableTrait;
 use pocketmine\player\Player;
-use pocketmine\event\Event;
-use pocketmine\event\player\PlayerInteractEvent;
 
 use function microtime;
 
 final class Configuration {
-	/**
-	 * @var microtime[]
-	 */
+
 	private static array $timeMSG = [];
 
 	/**
@@ -48,10 +42,9 @@ final class Configuration {
 
 	/**
 	 * @param Player $sender
-	 * @param Event $event
+	 * @param CancellableTrait $event
 	 */
-	public static function shoot(Player $sender, Event $event): void {
-		if (!$event instanceof EntityDamageEvent || !$event instanceof BlockBreakEvent || !$event instanceof BlockPlaceEvent || !$event instanceof PlayerInteractEvent) return;
+	public static function shoot(Player $sender, CancellableTrait $event): void {
 		if (!($event->isCancelled())) {
 			if ($sender->hasPermission("region.interactive.use")) {
 				if (self::getRegionProtect()->getConfig()->get("interactive-operator") != false) {

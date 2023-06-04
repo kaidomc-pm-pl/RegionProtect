@@ -138,9 +138,9 @@ class EventListener implements Listener {
 	}
 
 	/**
+	 * Feature used to remove player's data after leaving the server.
 	 * @param PlayerQuitEvent
 	 * @priority HIGHEST
-	 * Feature used to remove player's data after leaving the server.
 	 */
 	public function onQuit(PlayerQuitEvent $event): void {
 		SelectVector::setSelect($event->getPlayer(), false);

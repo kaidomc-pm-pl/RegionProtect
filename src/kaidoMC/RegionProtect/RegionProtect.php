@@ -18,11 +18,11 @@ use pocketmine\command\Command;
 
 use pocketmine\plugin\PluginBase;
 
-use pocketmine\utils\SingleTonTrait;
+use pocketmine\utils\SingletonTrait;
 use pocketmine\utils\TextFormat;
 
 class RegionProtect extends PluginBase {
-	use SingleTonTrait;
+	use SingletonTrait;
 
 	/**
 	 * @var VectorAdjust $vectorAdjust;
