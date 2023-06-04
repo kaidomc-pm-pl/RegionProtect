@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace kaidoMC\RegionProtect\Utils;
 
-use pocketmine\event\CancellableTrait;
 use kaidoMC\RegionProtect\RegionProtect;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\Event;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\player\Player;
 use function microtime;
