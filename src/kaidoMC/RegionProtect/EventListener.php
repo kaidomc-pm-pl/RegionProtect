@@ -102,7 +102,7 @@ class EventListener implements Listener {
 		$blocks = $event->getTransaction()->getBlocks();
 		foreach ($blocks as [$x, $y, $z, $block]) {
 			if (!$block instanceof Block) return;
-			$blockVector = $$block->getPosition();
+			$blockVector = $block->getPosition();
 			if (!$this->getRegionProtect()->getVectorAdjust()->getInteractBlock(Location::fromObject($blockVector, $blockVector->getWorld()), $event)) {
 				Configuration::shoot($event->getPlayer(), $event);
 			}
