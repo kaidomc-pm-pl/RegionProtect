@@ -20,7 +20,6 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 use function scandir;
-use function file_exists;
 
 final class VectorAdjust {
 	/**
@@ -28,8 +27,17 @@ final class VectorAdjust {
 	 */
 	private RegionProtect $regionProtect;
 
+    /**
+     * @var array<string, Config> $locations
+     */
+    private array $locations;
+
 	public function __construct(RegionProtect $regionProtect) {
 		$this->regionProtect = $regionProtect;
+
+        foreach (scandir($this->getRegionProtect()->getDataFolder() . "regions") as $file) {
+            $this->locations[explode(".", $file)[0]] = new Config($this->getRegionProtect()->getDataFolder() . "regions/" . explode(".", $file)[0] . ".yml", Config::YAML);
+        }
 	}
 
 	/**
@@ -43,7 +51,7 @@ final class VectorAdjust {
 	 * @return array
 	 */
 	public function getLocations(): array {
-		return scandir($this->getRegionProtect()->getDataFolder() . "regions");
+		return $this->locations;
 	}
 
 	/**
@@ -51,11 +59,43 @@ final class VectorAdjust {
 	 * @return Config|null
 	 */
 	public function getLocation(string $string): ?Config {
-		if (file_exists($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml")) {
-			return new Config($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml", Config::YAML);
+		if (isset($this->locations[$string])) {
+			return $this->locations[$string];
 		}
 		return null;
 	}
+
+    /**
+     * @param Location $currentVector
+     * @return Config|null
+     */
+    public function getLocationByVector(Location $currentVector): ?Config {
+        foreach ($this->getLocations() as $config) {
+            if ($config != null) {
+                if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
+                    continue;
+                }
+                $X1 = $config->get("FirstVector")["X"];
+                $X2 = $config->get("SecondVector")["X"];
+                $Y1 = $config->get("FirstVector")["Y"];
+                $Y2 = $config->get("SecondVector")["Y"];
+                $Z1 = $config->get("FirstVector")["Z"];
+                $Z2 = $config->get("SecondVector")["Z"];
+                if (
+                    $X1 <= $currentVector->getX() &&
+                    $X2 >= $currentVector->getX() &&
+                    $Y1 <= $currentVector->getY() &&
+                    $Y2 >= $currentVector->getY() &&
+                    $Z1 <= $currentVector->getZ() &&
+                    $Z2 >= $currentVector->getZ()
+                ) {
+                    return $config;
+                }
+            }
+        }
+
+        return null;
+    }
 
 	/**
 	 * @param Player $sender
@@ -80,18 +120,20 @@ final class VectorAdjust {
 					],
 					"World" => $sender->getWorld()->getDisplayName(),
 					"FirstVector" => [
-						"X" => $firstVector[0],
-						"Y" => $firstVector[1],
-						"Z" => $firstVector[2]
+						"X" => min($firstVector[0], $secondVector[0]),
+						"Y" => min($firstVector[1], $secondVector[1]),
+						"Z" => min($firstVector[2], $secondVector[2])
 					],
 					"SecondVector" => [
-						"X" => $secondVector[0],
-						"Y" => $secondVector[1],
-						"Z" => $secondVector[2]
+                        "X" => max($firstVector[0], $secondVector[0]),
+                        "Y" => max($firstVector[1], $secondVector[1]),
+                        "Z" => max($firstVector[2], $secondVector[2])
 					]
 				]
 			);
 			$config->save();
+
+            $this->locations[$string] = $config;
 
 			SelectVector::setSelect($sender, false);
 
@@ -105,6 +147,7 @@ final class VectorAdjust {
 	 */
 	public function removeLocation(Player $sender, string $string): void {
 		if ($this->getLocation($string) != null) {
+            unset($this->locations[$string]);
 			unlink($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml");
 			$sender->sendMessage(TextFormat::GREEN . "Successfully deleted the region " . $string);
 		} else {
@@ -152,30 +195,10 @@ final class VectorAdjust {
 	 * @return string|null
 	 */
 	public function getName(Location $currentVector): ?string {
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					return $config->get("Name");
-				}
-			}
-		}
+        $config = $this->getLocationByVector($currentVector);
+        if($config != null) {
+            return $config->get("Name");
+        }
 		return null;
 	}
 
@@ -184,34 +207,14 @@ final class VectorAdjust {
 	 * @return bool
 	 */
 	public function getPvP(Location $currentVector): bool {
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					if ($config->get("Interactive")["PvP"] != true) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+        $config = $this->getLocationByVector($currentVector);
+        if($config != null) {
+            if ($config->get("Interactive")["PvP"] != true) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 	/**
 	 * @param Location $currentVector
@@ -227,32 +230,12 @@ final class VectorAdjust {
 		} else {
 			return false;
 		}
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					if ($config->get("Interactive")[$string] != true) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+        $config = $this->getLocationByVector($currentVector);
+        if($config != null) {
+            if ($config->get("Interactive")[$string] != true) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
