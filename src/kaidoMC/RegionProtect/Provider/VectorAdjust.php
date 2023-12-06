@@ -208,8 +208,10 @@ final class VectorAdjust {
 	 */
 	public function getPvP(Location $currentVector): bool {
         $config = $this->getLocationByVector($currentVector);
-        if ($config->get("Interactive")["PvP"] != true) {
-            return false;
+        if($config != null) {
+            if ($config->get("Interactive")["PvP"] != true) {
+                return false;
+            }
         }
         return true;
     }
@@ -229,8 +231,10 @@ final class VectorAdjust {
 			return false;
 		}
         $config = $this->getLocationByVector($currentVector);
-        if ($config->get("Interactive")[$string] != true) {
-            return false;
+        if($config != null) {
+            if ($config->get("Interactive")[$string] != true) {
+                return false;
+            }
         }
         return true;
     }
