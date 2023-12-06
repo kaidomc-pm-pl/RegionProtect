@@ -89,7 +89,7 @@ final class VectorAdjust {
                     $Z1 <= $currentVector->getZ() &&
                     $Z2 >= $currentVector->getZ()
                 ) {
-                    return $config->get("Name");
+                    return $config;
                 }
             }
         }
