@@ -195,7 +195,7 @@ final class VectorAdjust {
 	 * @return string|null
 	 */
 	public function getName(Location $currentVector): ?string {
-		$config = $this->getLocationByVector($currentVector);
+        $config = $this->getLocationByVector($currentVector);
         if($config != null) {
             return $config->get("Name");
         }
