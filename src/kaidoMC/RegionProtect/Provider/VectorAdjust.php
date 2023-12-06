@@ -20,7 +20,6 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 use function scandir;
-use function file_exists;
 
 final class VectorAdjust {
 	/**
@@ -28,8 +27,17 @@ final class VectorAdjust {
 	 */
 	private RegionProtect $regionProtect;
 
+    /**
+     * @var array<string, Config> $locations
+     */
+    private array $locations;
+
 	public function __construct(RegionProtect $regionProtect) {
 		$this->regionProtect = $regionProtect;
+
+        foreach (scandir($this->getRegionProtect()->getDataFolder() . "regions") as $file) {
+            $this->locations[explode(".", $file)[0]] = new Config($this->getRegionProtect()->getDataFolder() . "regions/" . explode(".", $file)[0] . ".yml", Config::YAML);
+        }
 	}
 
 	/**
@@ -43,7 +51,7 @@ final class VectorAdjust {
 	 * @return array
 	 */
 	public function getLocations(): array {
-		return scandir($this->getRegionProtect()->getDataFolder() . "regions");
+		return array_keys($this->locations);
 	}
 
 	/**
@@ -51,8 +59,8 @@ final class VectorAdjust {
 	 * @return Config|null
 	 */
 	public function getLocation(string $string): ?Config {
-		if (file_exists($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml")) {
-			return new Config($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml", Config::YAML);
+		if (isset($this->locations[$string])) {
+			return $this->locations[$string];
 		}
 		return null;
 	}
@@ -93,6 +101,8 @@ final class VectorAdjust {
 			);
 			$config->save();
 
+            $this->locations[$string] = $config;
+
 			SelectVector::setSelect($sender, false);
 
 			$sender->sendMessage(TextFormat::GREEN . "Successfully created region titled " . $string);
@@ -105,6 +115,7 @@ final class VectorAdjust {
 	 */
 	public function removeLocation(Player $sender, string $string): void {
 		if ($this->getLocation($string) != null) {
+            unset($this->locations[$string]);
 			unlink($this->getRegionProtect()->getDataFolder() . "regions/" . $string . ".yml");
 			$sender->sendMessage(TextFormat::GREEN . "Successfully deleted the region " . $string);
 		} else {
@@ -152,8 +163,7 @@ final class VectorAdjust {
 	 * @return string|null
 	 */
 	public function getName(Location $currentVector): ?string {
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
+		foreach ($this->getLocations() as $config) {
 			if ($config != null) {
 				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
 					continue;
@@ -184,8 +194,7 @@ final class VectorAdjust {
 	 * @return bool
 	 */
 	public function getPvP(Location $currentVector): bool {
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
+        foreach ($this->getLocations() as $config) {
 			if ($config != null) {
 				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
 					continue;
@@ -227,8 +236,7 @@ final class VectorAdjust {
 		} else {
 			return false;
 		}
-		foreach ($this->getLocations() as $file) {
-			$config = $this->getLocation(explode(".", $file)[0]);
+        foreach ($this->getLocations() as $config) {
 			if ($config != null) {
 				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
 					continue;
