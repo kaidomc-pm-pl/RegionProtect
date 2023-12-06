@@ -65,6 +65,38 @@ final class VectorAdjust {
 		return null;
 	}
 
+    /**
+     * @param Location $currentVector
+     * @return Config|null
+     */
+    public function getLocationByVector(Location $currentVector): ?Config {
+        foreach ($this->getLocations() as $config) {
+            if ($config != null) {
+                if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
+                    continue;
+                }
+                $X1 = $config->get("FirstVector")["X"];
+                $X2 = $config->get("SecondVector")["X"];
+                $Y1 = $config->get("FirstVector")["Y"];
+                $Y2 = $config->get("SecondVector")["Y"];
+                $Z1 = $config->get("FirstVector")["Z"];
+                $Z2 = $config->get("SecondVector")["Z"];
+                if (
+                    $X1 <= $currentVector->getX() &&
+                    $X2 >= $currentVector->getX() &&
+                    $Y1 <= $currentVector->getY() &&
+                    $Y2 >= $currentVector->getY() &&
+                    $Z1 <= $currentVector->getZ() &&
+                    $Z2 >= $currentVector->getZ()
+                ) {
+                    return $config->get("Name");
+                }
+            }
+        }
+
+        return null;
+    }
+
 	/**
 	 * @param Player $sender
 	 * @param string $string
@@ -88,14 +120,14 @@ final class VectorAdjust {
 					],
 					"World" => $sender->getWorld()->getDisplayName(),
 					"FirstVector" => [
-						"X" => $firstVector[0],
-						"Y" => $firstVector[1],
-						"Z" => $firstVector[2]
+						"X" => min($firstVector[0], $secondVector[0]),
+						"Y" => min($firstVector[1], $secondVector[1]),
+						"Z" => min($firstVector[2], $secondVector[2])
 					],
 					"SecondVector" => [
-						"X" => $secondVector[0],
-						"Y" => $secondVector[1],
-						"Z" => $secondVector[2]
+                        "X" => max($firstVector[0], $secondVector[0]),
+                        "Y" => max($firstVector[1], $secondVector[1]),
+                        "Z" => max($firstVector[2], $secondVector[2])
 					]
 				]
 			);
@@ -163,29 +195,10 @@ final class VectorAdjust {
 	 * @return string|null
 	 */
 	public function getName(Location $currentVector): ?string {
-		foreach ($this->getLocations() as $config) {
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					return $config->get("Name");
-				}
-			}
-		}
+		$config = $this->getLocationByVector($currentVector);
+        if($config != null) {
+            return $config->get("Name");
+        }
 		return null;
 	}
 
@@ -194,33 +207,12 @@ final class VectorAdjust {
 	 * @return bool
 	 */
 	public function getPvP(Location $currentVector): bool {
-        foreach ($this->getLocations() as $config) {
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					if ($config->get("Interactive")["PvP"] != true) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+        $config = $this->getLocationByVector($currentVector);
+        if ($config->get("Interactive")["PvP"] != true) {
+            return false;
+        }
+        return true;
+    }
 
 	/**
 	 * @param Location $currentVector
@@ -236,31 +228,10 @@ final class VectorAdjust {
 		} else {
 			return false;
 		}
-        foreach ($this->getLocations() as $config) {
-			if ($config != null) {
-				if ($config->get("World") != $currentVector->getWorld()->getDisplayName()) {
-					continue;
-				}
-				$X1 = $config->get("FirstVector")["X"];
-				$X2 = $config->get("SecondVector")["X"];
-				$Y1 = $config->get("FirstVector")["Y"];
-				$Y2 = $config->get("SecondVector")["Y"];
-				$Z1 = $config->get("FirstVector")["Z"];
-				$Z2 = $config->get("SecondVector")["Z"];
-				if (
-					min($X1, $X2) <= $currentVector->getX() &&
-					max($X1, $X2) >= $currentVector->getX() &&
-					min($Y1, $Y2) <= $currentVector->getY() &&
-					max($Y1, $Y2) >= $currentVector->getY() &&
-					min($Z1, $Z2) <= $currentVector->getZ() &&
-					max($Z1, $Z2) >= $currentVector->getZ()
-				) {
-					if ($config->get("Interactive")[$string] != true) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+        $config = $this->getLocationByVector($currentVector);
+        if ($config->get("Interactive")[$string] != true) {
+            return false;
+        }
+        return true;
+    }
 }
