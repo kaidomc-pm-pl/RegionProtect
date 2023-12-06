@@ -93,13 +93,12 @@ class RegionProtect extends PluginBase {
 					break;
 				case "list":
 					$sender->sendMessage(TextFormat::YELLOW . "Total Regions in the world: (" . count($this->getVectorAdjust()->getLocations()) . ")");
-					foreach ($this->getVectorAdjust()->getLocations() as $file) {
-						$config = $this->getVectorAdjust()->getLocation(explode(".", $file)[0]);
+					foreach ($this->getVectorAdjust()->getLocations() as $name => $config) {
 						if ($config != null) {
 							if ($config->get("World") != $sender->getWorld()->getDisplayName()) {
 								continue;
 							}
-							$sender->sendMessage(TextFormat::GREEN . explode(".", $file)[0] . ": " . TextFormat::DARK_GRAY . $config->get("FirstVector")["X"] . " " . $config->get("FirstVector")["Y"] . " " . $config->get("FirstVector")["Z"]);
+							$sender->sendMessage(TextFormat::GREEN . $name . ": " . TextFormat::DARK_GRAY . $config->get("FirstVector")["X"] . " " . $config->get("FirstVector")["Y"] . " " . $config->get("FirstVector")["Z"]);
 						}
 					}
 					break;
