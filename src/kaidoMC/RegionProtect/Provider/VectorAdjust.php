@@ -51,7 +51,7 @@ final class VectorAdjust {
 	 * @return array
 	 */
 	public function getLocations(): array {
-		return array_keys($this->locations);
+		return $this->locations;
 	}
 
 	/**
